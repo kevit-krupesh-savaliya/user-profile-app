@@ -24,7 +24,8 @@ class JWTAuthMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        if request.META.get('PATH_INFO') == '/user/login' or request.META.get('PATH_INFO') == '/admin':
+        print(request.META.get('PATH_INFO'))
+        if request.META.get('PATH_INFO') == '/user/login' or '/admin/' in request.META.get('PATH_INFO'):
             response = self.get_response(request)
         else:
             token = request.META.get('HTTP_AUTHORIZATION')
