@@ -83,7 +83,7 @@ class UserLoginAPIView(UserAPIView):
                 },
                 key=SECRET_KEY
             )
-            return JsonResponse({'message': 'Login successful!', 'token': token.decode("utf-8")})
+            return JsonResponse({'message': 'Login successful!', 'token': token})
         else:
             return JsonResponse({'message': 'Incorrect email or password!'})
 
