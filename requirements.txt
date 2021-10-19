@@ -1,0 +1,5 @@
+boto3==1.18.64
+Django==3.2.8
+djangorestframework==3.12.4
+psycopg2==2.9.1
+PyJWT==2.3.0
