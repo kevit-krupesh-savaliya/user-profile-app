@@ -24,8 +24,7 @@ class JWTAuthMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        print(request.META.get('PATH_INFO'))
-        if request.META.get('PATH_INFO') == '/user/login' or '/admin/' in request.META.get('PATH_INFO'):
+        if request.META.get('PATH_INFO') == '/api/login' or '/admin/' in request.META.get('PATH_INFO'):
             response = self.get_response(request)
         else:
             token = request.META.get('HTTP_AUTHORIZATION')
@@ -33,6 +32,7 @@ class JWTAuthMiddleware(object):
                 try:
                     payload = jwt.decode(token.split()[1], key=SECRET_KEY, algorithms=['HS256'])
                     print(payload)
+                    request.payload_email = payload["email"]
                     response = self.get_response(request)
                 except:
                     return JsonResponse({'message': 'Invalid token!'}, status=status.HTTP_401_UNAUTHORIZED)

@@ -24,32 +24,48 @@ class UserDetailsAPIView(UserAPIView):
     def get(self, request, pk):
         try:
             user = User.objects.get(pk=pk)
-            user_serializer = self.serializer_class(user)
-            data = user_serializer.data
-            data["IP Address"] = request.ip_address
-            data["ID"] = user.id
-            return JsonResponse(data)
+            if request.payload_email == user.email:
+                user_serializer = self.serializer_class(user)
+                data = user_serializer.data
+                data["IP Address"] = request.ip_address
+                data["ID"] = user.id
+                del data["password"]
+                return JsonResponse(data)
+            else:
+                return JsonResponse({'message': 'Unauthorized action!'}, status=status.HTTP_401_UNAUTHORIZED)
         except User.DoesNotExist:
             return JsonResponse({'message': 'This user does not exist!'}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, pk):
         try:
             user = User.objects.get(pk=pk)
-            user_data = JSONParser().parse(request)
-            user_serializer = self.serializer_class(user, data=user_data)
-            if user_serializer.is_valid():
-                user_serializer.password = make_password(user_serializer.password)
-                user_serializer.save()
-                return JsonResponse(user_serializer.data)
-            return JsonResponse(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if request.payload_email == user.email:
+                user_data = JSONParser().parse(request)
+                user_data["password"] = make_password(user_data["password"])
+                user_serializer = self.serializer_class(user, data=user_data)
+                if user_serializer.is_valid():
+                    user = user_serializer.save()
+                    data = user_serializer.data
+                    data["IP Address"] = request.ip_address
+                    data["ID"] = user.id
+                    del data["password"]
+                    return JsonResponse(data)
+                return JsonResponse(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return JsonResponse({'message': 'Unauthorized action!'}, status=status.HTTP_401_UNAUTHORIZED)
         except User.DoesNotExist:
             return JsonResponse({'message': 'This user does not exist!'}, status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, pk):
         try:
             user = User.objects.get(pk=pk)
-            user.delete()
-            return JsonResponse({'message': 'This user was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+            if request.payload_email == user.email:
+                user_id = user.id
+                user.delete()
+                return JsonResponse({'message': f'User {user_id} was deleted successfully!'},
+                                    status=status.HTTP_204_NO_CONTENT)
+            else:
+                return JsonResponse({'message': 'Unauthorized action!'}, status=status.HTTP_401_UNAUTHORIZED)
         except User.DoesNotExist:
             return JsonResponse({'message': 'This user does not exist!'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -59,11 +75,14 @@ class UserCreateAPIView(UserAPIView):
     def post(self, request):
         user_data = JSONParser().parse(request)
         user_data['password'] = make_password(user_data['password'])
-        print(user_data['password'])
         user_serializer = self.serializer_class(data=user_data)
         if user_serializer.is_valid():
-            user_serializer.save()
-            return JsonResponse(user_serializer.data, status=status.HTTP_201_CREATED)
+            user = user_serializer.save()
+            data = user_serializer.data
+            data["IP Address"] = request.ip_address
+            data["ID"] = user.id
+            del data["password"]
+            return JsonResponse(data, status=status.HTTP_201_CREATED)
         return JsonResponse(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -86,7 +105,6 @@ class UserLoginAPIView(UserAPIView):
             return JsonResponse({'message': 'Login successful!', 'token': token})
         else:
             return JsonResponse({'message': 'Incorrect email or password!'})
-
 
 
 user_details_api = UserDetailsAPIView.as_view()
