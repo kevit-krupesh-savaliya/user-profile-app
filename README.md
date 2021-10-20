@@ -26,6 +26,8 @@
     $ python manage.py migrate
     ```
 
+5. Create a file named `.env` in project root directory from `example.env` file and set apprpriate values for all the variables.
+
 <br/>
 
 ## Project Structure

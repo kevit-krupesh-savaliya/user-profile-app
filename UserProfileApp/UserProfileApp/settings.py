@@ -6,14 +6,17 @@ from pathlib import Path
 import boto3
 from botocore.exceptions import ClientError
 from django.utils.translation import gettext_lazy as _
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-f719#nq6(59ak*dd1s$5sy)3cvf52zh+5%!sj)%rv-6ih!ao*v'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -63,20 +66,17 @@ WSGI_APPLICATION = 'UserProfileApp.wsgi.application'
 
 
 def get_secret():
-    secret_name = "arn:aws:secretsmanager:ap-south-1:541076457354:secret:default-poc-UyyHCM"
-    region_name = "ap-south-1"
-
     session = boto3.session.Session()
     client = session.client(
         service_name='secretsmanager',
-        region_name=region_name,
-        aws_secret_access_key="0+6wq2iEtoS1pJbdWItvtfkqXsAe4k6X0Z/J6gPS",
-        aws_access_key_id="AKIAX36VLQ6FOAJYSQWZ"
+        region_name=os.getenv('AWS_REGION_NAME'),
+        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID')
     )
 
     try:
         get_secret_value_response = client.get_secret_value(
-            SecretId=secret_name
+            SecretId=os.getenv('AWS_SECRET_NAME')
         )
     except ClientError as e:
         if e.response['Error']['Code'] == 'DecryptionFailureException':
