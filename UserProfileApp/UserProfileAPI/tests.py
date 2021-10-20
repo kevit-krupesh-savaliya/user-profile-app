@@ -40,6 +40,7 @@ class UserProfileTestCases(APITestCase):
             'email': "nick.fury@test.io",
             'password': "12345nickf"
         }
+        cls.invalid_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiIyZjViN2ZlYi01ZDQwLTRiZjgtYTdjZi1hZGJmNTQ4NjUzM2IiLCJ0aW1lIjoiMTAvMjAvMjAyMSwgMTA6NDY6NTEifQ.MhJpWV8wJP5lOVpnT_cSybCfDmQf7ERcbyW0ylpWoEY"
         cls.client.post(reverse("user-create"), cls.user_details, format='json')
 
     def test_correct_1_create_user(self):
@@ -65,14 +66,14 @@ class UserProfileTestCases(APITestCase):
 
     def test_correct_3_get_user(self):
         token = self.get_token(self.login_dict)
-        response = self.client.get("/api/user/1", HTTP_AUTHORIZATION=f'Bearer {token}')
+        response = self.client.get(reverse("user-details"), HTTP_AUTHORIZATION=f'Bearer {token}')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response_data = json.loads(response.content)
         self.assertEqual("IP Address" in response_data, True)
 
     def test_correct_4_update_user(self):
         token = self.get_token(self.login_dict)
-        response = self.client.put("/api/user/1", self.user_details_updated, format='json',
+        response = self.client.put(reverse("user-details"), self.user_details_updated, format='json',
                                    HTTP_AUTHORIZATION=f'Bearer {token}')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response_data = json.loads(response.content)
@@ -80,13 +81,13 @@ class UserProfileTestCases(APITestCase):
 
     def test_correct_5_delete_user(self):
         token = self.get_token(self.login_dict)
-        response = self.client.delete("/api/user/1", HTTP_AUTHORIZATION=f'Bearer {token}')
+        response = self.client.delete(reverse("user-details"), HTTP_AUTHORIZATION=f'Bearer {token}')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(User.objects.all().count(), 0)
 
     def test_incorrect_5_delete_user(self):
-        token = self.get_token(self.login_dict)
-        response = self.client.delete("/api/user/3", HTTP_AUTHORIZATION=f'Bearer {token}')
+        token = self.invalid_token
+        response = self.client.delete(reverse("user-details"), HTTP_AUTHORIZATION=f'Bearer {token}')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(User.objects.all().count(), 1)
 
@@ -94,5 +95,3 @@ class UserProfileTestCases(APITestCase):
         login_response = self.client.post(reverse("user-login"), login_dict, format='json')
         login_response_data = json.loads(login_response.content)
         return login_response_data["token"]
-
-

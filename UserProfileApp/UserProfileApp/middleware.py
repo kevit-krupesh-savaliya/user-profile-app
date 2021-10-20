@@ -24,17 +24,23 @@ class JWTAuthMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        if request.META.get('PATH_INFO') == '/api/login' or request.META.get(
-                'PATH_INFO') == '/api/user' or '/admin/' in request.META.get('PATH_INFO'):
+        if request.META.get('PATH_INFO') == '/api/user/login' or request.META.get(
+                'PATH_INFO') == '/api/user/create' or '/admin/' in request.META.get('PATH_INFO'):
             response = self.get_response(request)
         else:
             token = request.META.get('HTTP_AUTHORIZATION')
             if token and token.split()[1]:
                 try:
                     payload = jwt.decode(token.split()[1], key=SECRET_KEY, algorithms=['HS256'])
-                    request.payload_email = payload["email"]
-                    response = self.get_response(request)
-                except:
+                    if "uid" in payload:
+                        request.uid = payload["uid"]
+                        response = self.get_response(request)
+                    else:
+                        raise jwt.InvalidTokenError
+                except jwt.ExpiredSignatureError:
+                    return JsonResponse({'message': 'Token expired. Please login again!'},
+                                        status=status.HTTP_401_UNAUTHORIZED)
+                except jwt.InvalidTokenError:
                     return JsonResponse({'message': 'Invalid token!'}, status=status.HTTP_401_UNAUTHORIZED)
             else:
                 return JsonResponse({'message': 'Please provide token!'}, status=status.HTTP_401_UNAUTHORIZED)
