@@ -1,6 +1,6 @@
 # User Profile API
-<hr/>
 
+<hr/>
 
 ## Setup the Project
 
@@ -25,6 +25,7 @@
     $ python manage.py makemigrations
     $ python manage.py migrate
     ```
+
 <br/>
 
 ## Project Structure
@@ -58,15 +59,26 @@ UserProfileApp
         wsgi.py
         __init__.py
 ```
+
 <br/>
 
 ## Run the Project
+
 Run the following command
+
 ```
 $ python manage.py runserver
 ```
-<br/>
+
+You can use the Postman Collection present in the root directory of the project.
+<br/><br/>
 
 ## Test APIs
 
-Import postman collection, check root project directory
+Run the following command
+
+```
+$ python manage.py test
+```
+
+<br/>

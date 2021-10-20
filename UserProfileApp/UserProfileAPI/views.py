@@ -4,9 +4,11 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.http.response import JsonResponse
 from rest_framework import status
 from rest_framework.parsers import JSONParser
+from rest_framework.response import Response
 from rest_framework.views import APIView
 import jwt
 from UserProfileApp.settings import SECRET_KEY
+from rest_framework_extensions.cache.decorators import cache_response
 
 from .models import User
 from .serializers import UserSerializer
@@ -20,7 +22,7 @@ class UserAPIView(APIView):
 
 
 class UserDetailsAPIView(UserAPIView):
-
+    @cache_response(60 * 15, cache_errors=False)
     def get(self, request, pk):
         try:
             user = User.objects.get(pk=pk)
@@ -30,11 +32,11 @@ class UserDetailsAPIView(UserAPIView):
                 data["IP Address"] = request.ip_address
                 data["ID"] = user.id
                 del data["password"]
-                return JsonResponse(data)
+                return Response(data)
             else:
-                return JsonResponse({'message': 'Unauthorized action!'}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'message': 'Unauthorized action!'}, status=status.HTTP_401_UNAUTHORIZED)
         except User.DoesNotExist:
-            return JsonResponse({'message': 'This user does not exist!'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': 'This user does not exist!'}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, pk):
         try:
@@ -104,7 +106,7 @@ class UserLoginAPIView(UserAPIView):
             )
             return JsonResponse({'message': 'Login successful!', 'token': token})
         else:
-            return JsonResponse({'message': 'Incorrect email or password!'})
+            return JsonResponse({'message': 'Incorrect email or password!'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 user_details_api = UserDetailsAPIView.as_view()
