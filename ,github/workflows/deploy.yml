@@ -3,7 +3,7 @@ name: deploy to production
 on:
 
   push:
-    branches: [ feature/add_CI/CD ]
+    branches: [ master ]
 
 jobs:
   build:
