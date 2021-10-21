@@ -32,7 +32,7 @@ jobs:
 
       - name: Run test cases
         run: |
-          python manage.py migrate
+          python manage.py makemigrations
           python manage.py test
         working-directory: ./UserProfileApp
         env:
