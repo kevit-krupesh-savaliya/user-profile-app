@@ -17,16 +17,20 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: set test environment variable
-        run: |
-          - cp example.env .env
-
       - name: Run test cases
         run: |
           - pip install -r requirements.txt
           - python manage.py makemigations
           - python manage.py migrate
           - python manage.py test
+        env:
+          DEBUG: False
+          SECRET_KEY: test
+          ALLOWED_HOSTS: localhost
+          AWS_SECRET_NAME: False
+          AWS_REGION_NAME: False
+          AWS_SECRET_ACCESS_KEY: False
+          AWS_ACCESS_KEY_ID: False
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
