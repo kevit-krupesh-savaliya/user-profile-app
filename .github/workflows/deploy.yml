@@ -37,7 +37,7 @@ jobs:
           DEBUG: False
           SECRET_KEY: test
           ALLOWED_HOSTS: localhost
-          AWS_SECRET_NAME: False
+          AWS_SECRET_NAME: ${{ secrets.SECRET_NAME }}
           AWS_REGION_NAME: False
           AWS_SECRET_ACCESS_KEY: False
           AWS_ACCESS_KEY_ID: False
