@@ -18,11 +18,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: set test environment variable
-        run:
+        run: |
           - cp example.env .env
 
       - name: Run test cases
-        run:
+        run: |
           - pip install -r requirements.txt
           - python manage.py makemigations
           - python manage.py migrate
