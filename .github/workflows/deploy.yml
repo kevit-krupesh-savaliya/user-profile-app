@@ -33,6 +33,7 @@ jobs:
       - name: Run test cases
         run: |
           python manage.py makemigrations
+          python manage.py migrate --noinput
           python manage.py test
         working-directory: ./UserProfileApp
         env:
