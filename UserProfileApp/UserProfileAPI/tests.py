@@ -40,7 +40,7 @@ class UserProfileTestCases(APITestCase):
             'email': "nick.fury@test.io",
             'password': "12345nickf"
         }
-        cls.invalid_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiIyZjViN2ZlYi01ZDQwLTRiZjgtYTdjZi1hZGJmNTQ4NjUzM2IiLCJ0aW1lIjoiMTAvMjAvMjAyMSwgMTA6NDY6NTEifQ.MhJpWV8wJP5lOVpnT_cSybCfDmQf7ERcbyW0ylpWoEY"
+        cls.invalid_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiIyZjViN2ZlYi01ZDQwLTRiZjgtYTdjZi1hZGJmNTQ4NjUzM2IiLCJ0aW1lIjoiMTAvMjAvMjAyMSwgMTA6NDY6NTEifQ.MhJpWV8wJP5lOVpnT_cSybCfDmQf7ERcbyW0ylpWoEY_dasfs"
         cls.client.post(reverse("user-create"), cls.user_details, format='json')
 
     def test_correct_1_create_user(self):
@@ -82,7 +82,7 @@ class UserProfileTestCases(APITestCase):
     def test_incorrect_5_delete_user(self):
         token = self.invalid_token
         response = self.client.delete(reverse("user-details"), HTTP_AUTHORIZATION=f'Bearer {token}')
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(User.objects.all().count(), 1)
 
     def test_correct_5_delete_user(self):
