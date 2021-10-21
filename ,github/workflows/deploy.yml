@@ -17,6 +17,10 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: set test environment variable
+        run:
+          - cp example.env .env
+
       - name: Run test cases
         run:
           - pip install -r requirements.txt
