@@ -79,17 +79,17 @@ class UserProfileTestCases(APITestCase):
         response_data = json.loads(response.content)
         self.assertEqual("IP Address" in response_data, True)
 
-    def test_correct_5_delete_user(self):
-        token = self.get_token(self.login_dict)
-        response = self.client.delete(reverse("user-details"), HTTP_AUTHORIZATION=f'Bearer {token}')
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(User.objects.all().count(), 0)
-
     def test_incorrect_5_delete_user(self):
         token = self.invalid_token
         response = self.client.delete(reverse("user-details"), HTTP_AUTHORIZATION=f'Bearer {token}')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(User.objects.all().count(), 1)
+
+    def test_correct_5_delete_user(self):
+        token = self.get_token(self.login_dict)
+        response = self.client.delete(reverse("user-details"), HTTP_AUTHORIZATION=f'Bearer {token}')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(User.objects.all().count(), 0)
 
     def get_token(self, login_dict):
         login_response = self.client.post(reverse("user-login"), login_dict, format='json')
