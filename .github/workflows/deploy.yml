@@ -39,8 +39,8 @@ jobs:
           ALLOWED_HOSTS: localhost
           AWS_SECRET_NAME: ${{ secrets.SECRET_NAME }}
           AWS_REGION_NAME: ${{ secrets.AWS_REGION_NAME }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
