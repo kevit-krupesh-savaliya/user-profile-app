@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Python 3.8
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: 3.8
 
@@ -27,9 +27,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Check Python version
+        run: python --version
+
       - name: Run test cases
-        run: |
-          - python manage.py test
+        run: python manage.py test
         working-directory: ./UserProfileApp
         env:
           DEBUG: False
