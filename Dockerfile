@@ -11,4 +11,4 @@ RUN pip install uwsgi
 EXPOSE 8000
 
 
-CMD cd UserProfileApp && uwsgi --http "0.0.0.0:8000" --wsgi-file UserProfileApp/wsgi.py --master --enable-threads
+CMD cd UserProfileApp && uwsgi --http "0.0.0.0:8000" --wsgi-file UserProfileApp/wsgi.py --master --enable-threads --check-static .
