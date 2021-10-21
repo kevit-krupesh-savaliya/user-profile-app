@@ -29,6 +29,7 @@ jobs:
 
       - name: Run test cases
         run: |
+          - working-directory: ./UserProfileApp
           - python manage.py test
         env:
           DEBUG: False
