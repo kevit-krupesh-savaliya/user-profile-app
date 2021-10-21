@@ -31,7 +31,9 @@ jobs:
         run: python --version
 
       - name: Run test cases
-        run: python manage.py test
+        run: |
+          - python manage.py migrate
+          - python manage.py test
         working-directory: ./UserProfileApp
         env:
           DEBUG: False
